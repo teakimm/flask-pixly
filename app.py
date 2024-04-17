@@ -4,10 +4,12 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from PIL import Image, ExifTags
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 
 env = load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 app.config["SECRET_KEY"] = "never-tell!"
 
 
@@ -37,8 +39,7 @@ def get_all_images():
 @app.post("/images")
 def upload_images():
     """Upload image to cloud server."""
-
-    image_data = request.files['image']
+    image_data = request.files.get('image')
     file_name = secure_filename(image_data.filename)
 
     try:
