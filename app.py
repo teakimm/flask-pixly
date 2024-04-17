@@ -1,5 +1,6 @@
 import os
 import boto3
+import json
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 from PIL import Image, ExifTags
@@ -40,6 +41,10 @@ def get_all_images():
 def upload_images():
     """Upload image to cloud server."""
     image_data = request.files.get('image')
+    image_exif = request.form.get("exif")
+
+    test = json.loads(image_exif)
+    print(test)
     file_name = secure_filename(image_data.filename)
 
     try:
