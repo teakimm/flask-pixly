@@ -6,13 +6,18 @@ from dotenv import load_dotenv
 from PIL import Image, ExifTags
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
-
-env = load_dotenv()
+from models import connect_db, Image, db, SQLAlchemy
 
 app = Flask(__name__)
 CORS(app)
-app.config["SECRET_KEY"] = "never-tell!"
+app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    "DATABASE_URL", 'postgresql:///pixly')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ECHO'] = True
 
+env = load_dotenv()
+connect_db(app)
 
 s3 = boto3.client(
     "s3",
@@ -41,16 +46,20 @@ def get_all_images():
 def upload_images():
     """Upload image to cloud server."""
     image_data = request.files.get('image')
-    image_exif = request.form.get("exif")
+    state = request.form.get("state")
+    file_type = request.form.get("fileType")
+    model = request.form.get("model")
+    name = secure_filename(image_data.filename)
 
-    test = json.loads(image_exif)
-    print(test)
-    file_name = secure_filename(image_data.filename)
+    new_image = Image(state=state, file_type=file_type, model=model, name=name)
+
+    print(db.session.add(new_image))
+    db.session.commit()
 
     try:
-        s3.upload_fileobj(image_data, BUCKET_NAME, file_name, ExtraArgs={
+        s3.upload_fileobj(image_data, BUCKET_NAME, new_image.id, ExtraArgs={
                           'ContentType': image_data.content_type})
         pass
     except Exception as e:
         print(e)
-    return {'success': 'uploaded image', 'fileName': file_name}
+    return {'success': 'uploaded image', 'fileName': name}

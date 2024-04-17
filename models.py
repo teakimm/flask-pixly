@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Image(db.model):
+class Image(db.Model):
     __tablename__ = "images"
 
     name = db.Column(
@@ -13,7 +13,7 @@ class Image(db.model):
     )
 
     id = db.Column(
-        db.Text,
+        db.Integer,
         primary_key=True,
         autoincrement=True
     )
@@ -22,6 +22,18 @@ class Image(db.model):
         db.Text
     )
 
-    file_type = db.Column(
+    state = db.Column(
+        db.String(13),
+    )
+
+    model = db.Column(
         db.Text
     )
+
+
+def connect_db(app):
+    """Connect to database."""
+
+    app.app_context().push()
+    db.app = app
+    db.init_app(app)
