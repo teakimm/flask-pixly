@@ -53,13 +53,17 @@ def upload_images():
 
     new_image = Image(state=state, file_type=file_type, model=model, name=name)
 
-    print(db.session.add(new_image))
+    db.session.add(new_image)
     db.session.commit()
+    print()
 
     try:
-        s3.upload_fileobj(image_data, BUCKET_NAME, new_image.id, ExtraArgs={
-                          'ContentType': image_data.content_type})
+        s3.upload_fileobj(image_data,
+                          BUCKET_NAME, f"{str(new_image.id)}.{file_type}",
+                          ExtraArgs={
+                              'ContentType': image_data.content_type
+                          })
         pass
     except Exception as e:
         print(e)
-    return {'success': 'uploaded image', 'fileName': name}
+    return {'success': 'uploaded image', 'fileName': str(new_image.id)}
