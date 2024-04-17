@@ -45,11 +45,16 @@ def get_all_images():
 @app.post("/images")
 def upload_images():
     """Upload image to cloud server."""
-    image_data = request.files.get('image')
-    state = request.form.get("state")
-    file_type = request.form.get("fileType")
-    model = request.form.get("model")
-    name = secure_filename(image_data.filename)
+    image_data = request.files.get('image') or None
+    state = request.form.get("state") or None
+    file_type = request.form.get("fileType") or None
+    model = request.form.get("model") or None
+    name = secure_filename(request.form.get('name'))
+
+    print('state=', state)
+    print('file_type=', file_type)
+    print('model=', model)
+    print('name=', name)
 
     new_image = Image(state=state, file_type=file_type, model=model, name=name)
 

@@ -9,7 +9,8 @@ class Image(db.Model):
 
     name = db.Column(
         db.Text,
-        nullable=False
+        nullable=False,
+        default=''
     )
 
     id = db.Column(
@@ -24,10 +25,12 @@ class Image(db.Model):
 
     state = db.Column(
         db.String(13),
+        default=''
     )
 
     model = db.Column(
-        db.Text
+        db.Text,
+        default=''
     )
 
 
