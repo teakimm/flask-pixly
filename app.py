@@ -32,14 +32,26 @@ BUCKET_NAME = os.environ.get("aws_bucket_name")
 def get_all_images():
     """Get all image urls."""
 
-    public_urls = []
+    search = request.args.get('q')
+    if search:
+        images = Image.query.filter(Image.file_type == search).all()
+    else:
+        images = Image.query.all()
+
+    imageData = []
     try:
-        for item in s3.list_objects(Bucket=BUCKET_NAME)['Contents']:
-            url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{item['Key']}"
-            public_urls.append(url)
+        for image in images:
+            url = f"https://{BUCKET_NAME}.s3.amazonaws.com/{image.id}.{image.file_type}"
+            imageData.append({
+                'url': url,
+                'id': image.id,
+                'name': image.name,
+                'state': image.state,
+                'model': image.model
+            })
     except Exception as e:
         print(e)
-    return public_urls
+    return imageData
 
 
 @app.post("/images")
@@ -51,16 +63,10 @@ def upload_images():
     model = request.form.get("model") or None
     name = secure_filename(request.form.get('name'))
 
-    print('state=', state)
-    print('file_type=', file_type)
-    print('model=', model)
-    print('name=', name)
-
     new_image = Image(state=state, file_type=file_type, model=model, name=name)
 
     db.session.add(new_image)
     db.session.commit()
-    print()
 
     try:
         s3.upload_fileobj(image_data,
