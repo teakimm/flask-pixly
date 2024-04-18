@@ -32,9 +32,12 @@ BUCKET_NAME = os.environ.get("aws_bucket_name")
 def get_all_images():
     """Get all image urls."""
 
-    search = request.args.get('q')
-    if search:
-        images = Image.query.filter(Image.file_type == search).all()
+    searchTerm = request.args.get('searchTerm')
+    category = request.args.get('category')
+    if searchTerm and category:
+        images = Image.query.filter(
+            Image.__table__.c[category].ilike(f'%{searchTerm}%')
+        ).all()
     else:
         images = Image.query.all()
 
@@ -51,7 +54,11 @@ def get_all_images():
             })
     except Exception as e:
         print(e)
-    return imageData
+    response = jsonify({
+        'imageData': imageData
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 @app.post("/images")
