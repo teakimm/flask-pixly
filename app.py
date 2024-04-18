@@ -44,7 +44,7 @@ def get_all_images():
                 'url': url,
                 'id': image.id,
                 'name': image.name,
-                'state': image.state,
+                'location': image.location,
                 'model': image.model
             })
     except Exception as e:
@@ -60,12 +60,12 @@ def get_all_images():
 def upload_images():
     """Upload image to cloud server."""
     image_data = request.files.get('image') or None
-    state = request.form.get("state") or None
+    location = request.form.get("location") or None
     file_type = request.form.get("fileType") or None
     model = request.form.get("model") or None
     name = request.form.get('name')
 
-    new_image = Image(state=state, file_type=file_type, model=model, name=name)
+    new_image = Image(location=location, file_type=file_type, model=model, name=name)
 
     db.session.add(new_image)
     db.session.commit()

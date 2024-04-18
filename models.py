@@ -23,7 +23,7 @@ class Image(db.Model):
         db.Text
     )
 
-    state = db.Column(
+    location = db.Column(
         db.String(13),
         default=''
     )
