@@ -1,15 +1,10 @@
 import os
 import boto3
-import json
 from flask import Flask, jsonify, request
 from dotenv import load_dotenv
-from PIL import Image, ExifTags
-from werkzeug.utils import secure_filename
-from flask_cors import CORS
-from models import connect_db, Image, db, SQLAlchemy
+from models import connect_db, Image, db
 
 app = Flask(__name__)
-CORS(app)
 app.config['SECRET_KEY'] = "I'LL NEVER TELL!!"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     "DATABASE_URL", 'postgresql:///pixly')
@@ -68,7 +63,7 @@ def upload_images():
     state = request.form.get("state") or None
     file_type = request.form.get("fileType") or None
     model = request.form.get("model") or None
-    name = secure_filename(request.form.get('name'))
+    name = request.form.get('name')
 
     new_image = Image(state=state, file_type=file_type, model=model, name=name)
 
