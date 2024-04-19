@@ -6,6 +6,8 @@ db = SQLAlchemy()
 
 
 class Image(db.Model):
+    """Model for image table"""
+
     __tablename__ = "images"
 
     name = db.Column(

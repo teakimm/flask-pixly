@@ -25,7 +25,22 @@ BUCKET_NAME = os.environ.get("aws_bucket_name")
 
 @app.get("/images")
 def get_all_images():
-    """Get all image urls."""
+    """Get a list of image data based on query
+
+    returns:
+    data: [
+    { url,
+      name,
+      location,
+      model,
+      uploaded_at
+      },
+      ...
+    ]
+
+
+
+    """
 
     searchTerm = request.args.get('searchTerm')
     category = request.args.get('category')
@@ -66,7 +81,8 @@ def upload_images():
     model = request.form.get("model") or None
     name = request.form.get('name')
 
-    new_image = Image(location=location, file_type=file_type, model=model, name=name)
+    new_image = Image(location=location, file_type=file_type,
+                      model=model, name=name)
 
     db.session.add(new_image)
     db.session.commit()
