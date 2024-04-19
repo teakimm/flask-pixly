@@ -37,7 +37,7 @@ class Image(db.Model):
     uploaded_at = db.Column(
         db.DateTime,
         nullable=False,
-        default=datetime.utcnow(),
+        default=datetime.utcnow
     )
 
 
