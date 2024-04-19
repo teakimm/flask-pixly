@@ -32,9 +32,9 @@ def get_all_images():
     if searchTerm and category:
         images = Image.query.filter(
             Image.__table__.c[category].ilike(f'%{searchTerm}%')
-        ).all()
+        ).order_by(Image.uploaded_at.desc()).all()
     else:
-        images = Image.query.all()
+        images = Image.query.order_by(Image.uploaded_at.desc()).all()
 
     imageData = []
     try:
@@ -45,7 +45,8 @@ def get_all_images():
                 'id': image.id,
                 'name': image.name,
                 'location': image.location,
-                'model': image.model
+                'model': image.model,
+                'uploadedAt': image.uploaded_at
             })
     except Exception as e:
         print(e)

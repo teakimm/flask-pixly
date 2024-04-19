@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 
 db = SQLAlchemy()
@@ -31,6 +32,12 @@ class Image(db.Model):
     model = db.Column(
         db.Text,
         default=''
+    )
+
+    uploaded_at = db.Column(
+        db.DateTime,
+        nullable=False,
+        default=datetime.utcnow(),
     )
 
 
